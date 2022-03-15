@@ -173,15 +173,27 @@ class CCXTStore(with_metaclass(MetaSingleton, object)):
     @retry
     def create_order(self, symbol, order_type, side, amount, price, params):
         # returns the order
+        print(f"self.exchange.create_order(symbol={symbol}, type={order_type}, side={side},
+                                          amount={amount}, price={price}, params={params}",
+        self.exchange.create_order(symbol=symbol, type=order_type, side=side,
+                                          amount=amount, price=price, params=params),
+        "\n\n")
+        
         return self.exchange.create_order(symbol=symbol, type=order_type, side=side,
                                           amount=amount, price=price, params=params)
 
     @retry
     def cancel_order(self, order_id, symbol):
+        print(f"self.exchange.cancel_order({order_id}, {symbol})",
+              self.exchange.cancel_order(order_id, symbol),
+              "\n\n")
         return self.exchange.cancel_order(order_id, symbol)
 
     @retry
     def fetch_trades(self, symbol):
+        print(f"self.exchange.fetch_trades(f{symbol})", 
+              self.exchange.fetch_trades(symbol),
+             '\n\n')
         return self.exchange.fetch_trades(symbol)
 
     @retry
