@@ -164,6 +164,13 @@ class CCXTStore(with_metaclass(MetaSingleton, object)):
         # Fix if None is returned
         self._cash = cash if cash else 0
         self._value = value if value else 0
+        
+        print("balance ", balance)
+        print("cash ", cash)
+        print("value ", value)
+        print("self._cash ", self._cash)
+        print("self._value ", self._value)
+        
 
     @retry
     def getposition(self):
@@ -202,6 +209,9 @@ class CCXTStore(with_metaclass(MetaSingleton, object)):
 
     @retry
     def fetch_order(self, oid, symbol):
+        print(f"self.exchange.fetch_order({oid}, {symbol})",
+              self.exchange.fetch_order(oid, symbol),
+               "\n\n")
         return self.exchange.fetch_order(oid, symbol)
 
     @retry
