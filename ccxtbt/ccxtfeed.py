@@ -71,7 +71,31 @@ class CCXTFeed(with_metaclass(MetaCCXTFeed, DataBase)):
         ('fetch_ohlcv_params', {}),
         ('ohlcv_limit', 20),
         ('drop_newest', False),
-        ('debug', False)
+        ('debug', False),
+        #ADDED BY KISKO
+        ('value_for_rightedge', { 
+                    '1m':60,
+                    '3m':60*3,
+                    '5m':60*5,
+                    '15m':60*15,
+                    '30m':60*30,
+                    '1h':60*60,
+                    '90m':60*90,
+                    '2h':60*60*2,
+                    '3h':60*60*3,
+                    '4h':60*60*4,
+                    '6h':60*60*6,
+                    '8h':60*60*8,
+                    '12h':60*60*12,
+                    '1d':60*60*24,
+                    '3d':'timeframe_not_supported',
+                    '1w':'timeframe_not_supported',
+                    '2w':'timeframe_not_supported',
+                    '1M':'timeframe_not_supported',
+                    '3M':'timeframe_not_supported',
+                    '6M':'timeframe_not_supported',
+                    '1y':'timeframe_not_supported',
+    })
     )
 
     _store = CCXTStore
@@ -86,6 +110,10 @@ class CCXTFeed(with_metaclass(MetaCCXTFeed, DataBase)):
         self._data = deque()  # data queue for price data
         self._last_id = ''  # last processed trade id for ohlcv
         self._last_ts = 0  # last processed timestamp for ohlcv
+
+        #ADDED BY KISKO
+        self.p.debug = self.store.debug
+        self.p.drop_newest = True
 
     def start(self, ):
         DataBase.start(self)
@@ -190,9 +218,17 @@ class CCXTFeed(with_metaclass(MetaCCXTFeed, DataBase)):
                 #    continue
 
                 if tstamp > self._last_ts:
+                    #ADDED BY KISKO
+                    converted_ohlcv = ohlcv.copy()
+                    converted_ohlcv[0] = ohlcv[0] + self.p.value_for_rightedge[granularity]*1000
+                    
                     if self.p.debug:
-                        print('Adding: {}'.format(ohlcv))
-                    self._data.append(ohlcv)
+                        #print('Adding: {}'.format(ohlcv))
+                        print('Adding: {}'.format(converted_ohlcv))
+                        #print('adding ohlcv ', ohlcv)
+                        #print('timestamp ', ohlcv[0])
+                    self._data.append(converted_ohlcv)
+                    #self._data.append(ohlcv)
                     self._last_ts = tstamp
 
             if dlen == len(self._data):
